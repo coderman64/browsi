@@ -18,7 +18,7 @@ class app(Tk):
 
         self.navEntry = Entry(self.titlebar);
         self.navEntry.pack(fill=BOTH, expand = 1, side = LEFT)
-        self.navEntry.insert(0,"file:///Users/legom/Documents/projects/python/browsi/AboutBrowsi.html")
+        self.navEntry.insert(0,"AboutBrowsi")
 
         self.gobutton = Button(self.titlebar, text = "GO!", command = self.go)
         self.gobutton.pack(side = RIGHT)
@@ -40,6 +40,7 @@ class app(Tk):
             self.cTg12 = ""
             self.parent = parent
             self.alinkz = ""
+            self.inputType = ""
         def handle_starttag(self,tag,attrs):
             if tag == "br":
                 self.parent.page.config(state = NORMAL)
@@ -47,18 +48,26 @@ class app(Tk):
                 self.parent.page.config(state = DISABLED)
             elif tag == "input":
                 self.cTg12 += "-"+tag
+                say = ""
                 for i in attrs:
+                    if i[0] == "value":
+                        say = i[1]
                     if i[0] == "type":
-                        print("type: "+i[1])
+                        print("input type: "+i[1])
                         self.parent.page.config(state = NORMAL)
+                        self.inputType = i[1]
                         if i[1] == "text":
-                            self.parent.page.insert(END,"[TEXT]")
+                            h = Entry(self.parent.page)
+                            self.parent.page.window_create(END,window=h)
                         elif i[1] == "checkbox":
                             self.parent.page.insert(END,"[chkbox]")
                         elif i[1] == "submit":
                             h = Button(self.parent.page, text = "Submit Query")
                             self.parent.page.window_create(END,window=h)
-                        self.parent.page.config(state = DISABLED)
+                if self.inputType == "button":
+                    h = Button(self.parent.page, text = say)
+                    self.parent.page.window_create(END,window=h)
+                self.parent.page.config(state = DISABLED)
             else:
                 if tag == "a":
                     for i in attrs:
@@ -94,16 +103,7 @@ class app(Tk):
                 self.parent.page.insert(END,data,tagi)
                 self.parent.page.config(state = DISABLED)
             elif tagi == "style": # --------------STYLE------------
-                dataleft = data
-                for i in range(0, data.count("{")):
-                    
-                    loc1 = dataleft.find("{")
-                    loc2 = dataleft.find("}")
-                    tagstyle = dataleft[:loc1].rstrip(" ")
-                    bg1 = css.bg(dataleft[loc1:loc2])
-                    fg1 = css.fg(dataleft[loc1:loc2])
-                    self.parent.page.tag_config(tagstyle, background = bg1, foreground = fg1)
-                    dataleft = dataleft[loc2+1:]
+                css.run(self.parent.page, data)
                     
     def go(self):
         if self.renderThread == None or self.renderThread.is_alive() == False:
@@ -113,8 +113,11 @@ class app(Tk):
         try:
             url = self.navEntry.get()
             self.navEntry.config(state = DISABLED)
-            if url.startswith("file:///"):
-                webpage = open(url.replace("file:///","/").replace("\\","/"));
+            if url=="AboutBrowsi":
+                webpage = open("AboutBrowsi.html");
+               
+            elif url.startswith("file://"):
+                webpage = open(url.replace("file:///","/").replace("\\","/").replace("file://","./"));
             else:
                 if url.startswith("http") != True:
                     self.navEntry.config(state = NORMAL)
