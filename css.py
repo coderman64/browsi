@@ -6,6 +6,8 @@ def run(page, data):
         page.tag_config("a", foreground="blue", background=None, underline=1, font = "mono 12")
         page.tag_config("h1", foreground="black", background = None, font = "mono 24 bold")
         page.tag_config("h2", foreground="black", background = None, font = "mono 18 bold")
+        page.tag_config("strong", foreground="black", background = None, font = "mono 12 bold")
+        page.tag_config("b", foreground="black", background = None, font = "mono 12 bold")
         dataleft = data
         for i in range(0, data.count("{")):
             loc1 = dataleft.find("{")

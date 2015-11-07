@@ -46,6 +46,10 @@ class app(Tk):
                 self.parent.page.config(state = NORMAL)
                 self.parent.page.insert(END,"\n")
                 self.parent.page.config(state = DISABLED)
+            elif tag == "li":
+                self.parent.page.config(state = NORMAL)
+                self.parent.page.insert(END,"  • ")
+                self.parent.page.config(state = DISABLED)
             elif tag == "input":
                 self.cTg12 += "-"+tag
                 say = ""
@@ -56,16 +60,18 @@ class app(Tk):
                         print("input type: "+i[1])
                         self.parent.page.config(state = NORMAL)
                         self.inputType = i[1]
-                        if i[1] == "text":
-                            h = Entry(self.parent.page)
-                            self.parent.page.window_create(END,window=h)
-                        elif i[1] == "checkbox":
-                            self.parent.page.insert(END,"[chkbox]")
-                        elif i[1] == "submit":
-                            h = Button(self.parent.page, text = "Submit Query")
-                            self.parent.page.window_create(END,window=h)
+                        
+                        if i[1] == "checkbox":
+                            self.parent.page.insert(END,"[v]")
                 if self.inputType == "button":
                     h = Button(self.parent.page, text = say)
+                    self.parent.page.window_create(END,window=h)
+                elif self.inputType == "submit":
+                    h = Button(self.parent.page, text = say)
+                    self.parent.page.window_create(END,window=h)
+                elif self.inputType == "text":
+                    h = Entry(self.parent.page)
+                    h.insert(END, say)
                     self.parent.page.window_create(END,window=h)
                 self.parent.page.config(state = DISABLED)
             else:
@@ -83,7 +89,8 @@ class app(Tk):
             else:
                 bob = self.cTg12.rfind(tag)
                 self.cTg12 = self.cTg12[:bob-1]
-                if tag != "style" and tag != "script" and tag != "input" and tag != "form" and tag != "title" and tag != "a":
+                #tag != "style" and tag != "script" and tag != "input" and tag != "form" and tag != "title" and tag != "a" and tag != "strong"
+                if tag == "p" or tag == "li" or tag == "tr" or tag == "h1" or tag == "h2":
                     self.parent.page.config(state = NORMAL)
                     self.parent.page.insert(END,"\n")
                     self.parent.page.config(state = DISABLED)
@@ -92,6 +99,7 @@ class app(Tk):
             tagi = self.cTg12[bob+1:]
             data = data.replace("\\n","").replace("\n","")
             data = data.replace("\\t","\t").replace("\\'","\'")
+            data = data.strip(" ").rstrip(" ")
             if tagi == "title":
                 self.parent.title("browsi - "+str(data));
             elif tagi == "a":
@@ -119,11 +127,17 @@ class app(Tk):
             elif url.startswith("file://"):
                 webpage = open(url.replace("file:///","/").replace("\\","/").replace("file://","./"));
             else:
-                if url.startswith("http") != True:
+                if url.startswith("http") != True and url.startswith("www."):
                     self.navEntry.config(state = NORMAL)
                     self.navEntry.insert(0,"http://")
                     self.navEntry.config(state = DISABLED)
                     url = "http://"+url
+                else:
+                    self.navEntry.config(state = NORMAL)
+                    url = "http://www.duckduckgo.com/lite?q="+url
+                    self.navEntry.delete(0,END)
+                    self.navEntry.insert(0,url)
+                    self.navEntry.config(state = DISABLED)
                 webpage = request.urlopen(url);
             webpage = webpage.read()
             self.page.config(state = NORMAL)
