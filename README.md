@@ -11,3 +11,10 @@ This is basically just a "cool" experiment in python.
 
 ### TO DOWNLOAD & INSTALL
 you should be able to run the "brwsi.py" file after installing a recent (3.x) version of python. Tkinter needs to be installed for it to work correctly, but don't worry, it's included with the default install.
+
+###working on:
+* html rendering is usually incorrect
+* little to no css
+* no tabbed browsing
+* links are a work in progress
+* some forms will show up, but won't work
