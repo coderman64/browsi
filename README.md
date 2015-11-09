@@ -10,7 +10,7 @@ This is basically just a "cool" experiment in python.
 * you can now search from the URL bar
 
 ### TO DOWNLOAD & INSTALL
-you should be able to run the "brwsi.py" file after installing a recent (3.x) version of python. Tkinter needs to be installed for it to work correctly, but don't worry, it's included with the default install.
+you should be able to run the "brwsi.py" file after installing a recent (3.x) version of python. Tkinter needs to be installed for it to work correctly, but don't worry, it's usually included with the default python packages.
 
 ###working on:
 * html rendering is usually incorrect
