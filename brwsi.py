@@ -1,5 +1,6 @@
 import urllib.request as request
 from tkinter import *
+from tkinter import ttk
 from html.parser import HTMLParser
 import threading
 from htmlParser1 import browsiParse
@@ -23,6 +24,12 @@ class app(Tk):
 
         self.gobutton = Button(self.titlebar, text = "GO!", command = self.go)
         self.gobutton.pack(side = RIGHT)
+
+        self.baro = 50;
+        self.progressFrame = Frame(self);
+        self.progressFrame.pack(side = BOTTOM, fill=X)
+        self.progress = ttk.Progressbar(self.progressFrame, orient=HORIZONTAL, length = 200, mode='determinate', value = 50);
+        self.progress.pack(fill=X)
         
         self.pagescroll = Scrollbar (self)
         self.page = Text(self, yscrollcommand = self.pagescroll.set, wrap = "word")
@@ -55,6 +62,8 @@ class app(Tk):
         try:
             url = self.navEntry.get()
             self.navEntry.config(state = DISABLED)
+            self.progress.config(mode='indeterminate');
+            self.progress.start()
             if url.lower()=="aboutbrowsi":
                 webpage = open("AboutBrowsi.html"); 
             elif url.startswith("file://"):
@@ -72,11 +81,14 @@ class app(Tk):
                     self.navEntry.insert(0,url)
                     self.navEntry.config(state = DISABLED)
                 webpage = request.urlopen(url);
+            
             webpage = webpage.read()
             self.page.config(state = NORMAL)
             self.page.delete("0.0",END)
             self.page.config(state = DISABLED)
-            parsy = self.browsiParse(self)
+            self.progress.stop()
+            self.progress.config(mode='determinate');
+            parsy = self.browsiParse(self, str(webpage))
             print("HERE")
             parsy.feed(str(webpage));
             print("and HERE")
@@ -86,7 +98,11 @@ class app(Tk):
             print("hi")
             self.page.config(state = DISABLED)
             self.navEntry.config(state = NORMAL)
+            self.progress.config(length = 0)
+            self.progress.config(mode='determinate', value = 0);
         except:
+            self.progress.stop()
+            self.progress.config(mode='determinate', value = 0);
             url = self.navEntry.get()
             self.page.config(state = NORMAL)
             self.page.delete("0.0",END)

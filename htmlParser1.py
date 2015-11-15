@@ -3,13 +3,22 @@ from html.parser import HTMLParser
 import css
 
 class browsiParse(HTMLParser):
-        def __init__(self,parent):
+        def __init__(self,parent,page1):
             HTMLParser.__init__(self);
             self.cTg12 = ""
             self.parent = parent
             self.alinkz = ""
             self.inputType = ""
+            self.total = 0
+            self.page1 = page1
         def handle_starttag(self,tag,attrs):
+            self.total += 1
+            if self.page1.count("<")-(self.page1.count("</")+self.page1.count("<!")) > 0:
+                timez = (self.total/(self.page1.count("<")-(self.page1.count("</")+self.page1.count("<!"))))*100
+                self.parent.progress.config(value=timez)
+                pass
+            else:
+                self.parent.progress.config(mode='indeterminate')
             if tag == "br":
                 self.parent.page.config(state = NORMAL)
                 self.parent.page.insert(END,"\n")
